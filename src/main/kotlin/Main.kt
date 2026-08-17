@@ -10,6 +10,7 @@ fun main() {
                     is Herbivore -> print("H")
                     is Predator -> print("R")
                 }
+            } else {
                 print("O")
             }
         }
