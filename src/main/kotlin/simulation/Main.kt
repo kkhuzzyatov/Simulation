@@ -1,3 +1,10 @@
+package simulation
+
+import simulation.creatures.Herbivore
+import simulation.creatures.Predator
+import simulation.general.Coordinates
+import simulation.general.Map
+
 fun main() {
     val map = Map()
     val i = 0

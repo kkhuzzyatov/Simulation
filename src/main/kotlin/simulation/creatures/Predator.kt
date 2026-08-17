@@ -1,3 +1,8 @@
+package simulation.creatures
+
+import simulation.interfaces.Attackable
+import simulation.interfaces.Movable
+
 class Predator(
     speed: Int,
     hp: Int,
