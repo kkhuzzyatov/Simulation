@@ -1,5 +1,7 @@
 package simulation.interfaces
 
+import simulation.general.Map
+
 interface Movable {
-    fun makeMove()
+    fun move(map: Map)
 }

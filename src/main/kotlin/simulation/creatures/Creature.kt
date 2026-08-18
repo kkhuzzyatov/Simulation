@@ -1,17 +1,16 @@
 package simulation.creatures
 
-import simulation.general.Coordinates
 import simulation.general.Entity
+import simulation.general.Map
 import simulation.interfaces.Movable
 
 abstract class Creature(
-    val speed: Int,
+    val speed: Double,
     var hp: Int,
     var hunger: Int,
-    var satiety: Double,
-    position: Coordinates
-) : Entity(position), Movable {
-    override fun makeMove() {
+    var satiety: Double
+) : Entity(), Movable {
+    override fun move(map: Map) {
         TODO("Not yet implemented")
     }
 }
