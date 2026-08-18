@@ -1,7 +1,17 @@
 package simulation.general
 
-import simulation.creatures.Creature
-
 class Map (
-    val map: MutableMap<Coordinates, Creature> = mutableMapOf(),
-)
+    private val map: MutableMap<Coordinates, Entity> = mutableMapOf(),
+) {
+    fun get(coordinate: Coordinates): Entity? {
+        return map[coordinate]
+    }
+
+    fun clear(coordinate: Coordinates) {
+        map.remove(coordinate)
+    }
+
+    fun update(coordinate: Coordinates, entity: Entity) {
+        map[coordinate] = entity
+    }
+}
