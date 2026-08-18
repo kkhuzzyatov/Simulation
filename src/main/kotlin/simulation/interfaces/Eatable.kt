@@ -1,4 +1,4 @@
-package simulation.food
+package simulation.interfaces
 
 interface Eatable {
     fun getValue(): Int
