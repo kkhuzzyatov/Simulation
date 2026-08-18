@@ -1,3 +1,5 @@
 package simulation.general
 
-abstract class Entity
+abstract class Entity(
+    var position: Coordinates
+)

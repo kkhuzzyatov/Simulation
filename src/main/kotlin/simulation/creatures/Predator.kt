@@ -1,18 +1,17 @@
 package simulation.creatures
 
+import simulation.general.Coordinates
 import simulation.interfaces.Attackable
-import simulation.interfaces.Movable
 
 class Predator(
     speed: Int,
     hp: Int,
-    val attack : Int
-) : Creature(speed, hp), Movable, Attackable {
+    val attack : Int,
+    hunger: Int,
+    satiety: Double,
+    position: Coordinates
+) : Creature(speed, hp, hunger, satiety, position), Attackable {
     override fun attack(target: Creature) {
-        TODO("Not yet implemented")
-    }
-
-    override fun makeMove() {
         TODO("Not yet implemented")
     }
 }
