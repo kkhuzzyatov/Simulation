@@ -1,24 +1,24 @@
 package simulation.general
 
 class Map(
-    private val cells: MutableMap<Coordinates, Entity> = mutableMapOf(),
+    private val cells: MutableMap<Position, Entity> = mutableMapOf(),
 ) {
 
-    fun get(coordinate: Coordinates): Entity? =
+    fun get(coordinate: Position): Entity? =
         cells[coordinate]
 
-    fun isEmpty(coordinate: Coordinates): Boolean =
+    fun isEmpty(coordinate: Position): Boolean =
         !cells.containsKey(coordinate)
 
-    fun remove(coordinate: Coordinates) {
+    fun remove(coordinate: Position) {
         cells.remove(coordinate)
     }
 
-    fun put(coordinate: Coordinates, entity: Entity) {
+    fun put(coordinate: Position, entity: Entity) {
         cells[coordinate] = entity
     }
 
-    fun move(from: Coordinates, to: Coordinates) {
+    fun move(from: Position, to: Position) {
         val entity = cells[from] ?: return
         cells.remove(from)
         cells[to] = entity
