@@ -2,8 +2,12 @@ package simulation
 
 import simulation.creatures.Herbivore
 import simulation.creatures.Predator
+import simulation.food.Grass
+import simulation.food.Tree
 import simulation.general.Coordinates
 import simulation.general.Map
+import simulation.landscape.Rock
+import simulation.config.Signs
 
 fun main() {
     val map = Map()
@@ -11,14 +15,13 @@ fun main() {
     println("Current move: $i")
     for (x in 0..10) {
         for (y in 0..10) {
-            if (map.map.containsKey(Coordinates(x, y))) {
-                val creature = map.map[Coordinates(x, y)]
-                when (creature) {
-                    is Herbivore -> print("H")
-                    is Predator -> print("R")
-                }
-            } else {
-                print("O")
+            when (map.get(Coordinates(x, y))) {
+                is Herbivore -> print(Signs.HERBIVORE)
+                is Predator -> print(Signs.PREDATOR)
+                is Grass -> print(Signs.GRASS)
+                is Tree -> print(Signs.TREE)
+                is Rock -> print(Signs.ROCK)
+                else -> print(" ")
             }
         }
         println()
