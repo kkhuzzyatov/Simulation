@@ -18,12 +18,16 @@ object PathFinder {
         }
 
     fun findNearestHerbivore(
-        start: Position,
+        position: Position,
         map: Map,
-    ): Position? =
-        findNearest(start, map) { entity ->
-            entity is Herbivore
-        }
+    ): Herbivore? =
+        map
+            .getAllEntities()
+            .filterIsInstance<Herbivore>()
+            .minByOrNull {
+                kotlin.math.abs(it.position.x - position.x) +
+                    kotlin.math.abs(it.position.y - position.y)
+            }
 
     private fun findNearest(
         start: Position,
