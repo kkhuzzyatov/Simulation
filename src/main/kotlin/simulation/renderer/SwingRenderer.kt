@@ -1,153 +1,111 @@
 package simulation.renderer
 
-import simulation.config.ImageConfig
 import simulation.config.SimulationConfig
-import simulation.creatures.Herbivore
-import simulation.creatures.Predator
 import simulation.engine.SimulationEngine
-import simulation.food.Grass
-import simulation.food.Tree
 import simulation.general.Map
-import simulation.general.Position
-import simulation.landscape.Rock
 import java.awt.BorderLayout
 import java.awt.Font
-import java.awt.Graphics
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.Timer
 
 object SwingRenderer {
-    private const val CELL_SIZE = 30
-
     private var turn = 0
 
-    private lateinit var turnLabel: JLabel
-    private lateinit var creatureLabel: JLabel
-    private lateinit var fieldPanel: JPanel
-
     fun render(map: Map) {
-        val frame = JFrame("Simulation")
+        val frame =
+            JFrame("Simulation")
 
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        val animationManager =
+            AnimationManager()
 
-        frame.setSize(
-            SimulationConfig.WIDTH * CELL_SIZE + 20,
-            SimulationConfig.HEIGHT * CELL_SIZE + 100,
-        )
+        val panel =
+            SimulationPanel(
+                map,
+                animationManager,
+            )
 
-        turnLabel =
+        val turnLabel =
             JLabel(
-                "Turn: $turn",
+                "Turn: 0",
                 JLabel.CENTER,
             ).apply {
-                font = Font("Arial", Font.BOLD, 18)
+                font =
+                    Font(
+                        "Arial",
+                        Font.BOLD,
+                        18,
+                    )
             }
 
-        creatureLabel =
-            JLabel(
-                "",
-                JLabel.CENTER,
-            ).apply {
-                font = Font("Arial", Font.PLAIN, 16)
-            }
+        val button =
+            JButton("Next Turn")
 
-        fieldPanel =
-            object : JPanel() {
-                override fun paintComponent(g: Graphics) {
-                    super.paintComponent(g)
+        lateinit var timer: Timer
 
-                    g.font = Font("Segoe UI Emoji", Font.PLAIN, 22)
+        timer =
+            Timer(16) {
+                animationManager.update()
+                panel.repaint()
 
-                    for (y in 0 until SimulationConfig.HEIGHT) {
-                        for (x in 0 until SimulationConfig.WIDTH) {
-                            val entity = map.get(Position(x, y))
-
-                            val icon =
-                                when (entity) {
-                                    is Herbivore -> ImageConfig.HERBIVORE
-                                    is Predator -> ImageConfig.PREDATOR
-                                    is Grass -> ImageConfig.GRASS
-                                    is Tree -> ImageConfig.TREE
-                                    is Rock -> ImageConfig.ROCK
-                                    else -> " "
-                                }
-
-                            g.drawString(
-                                icon,
-                                x * CELL_SIZE + 5,
-                                y * CELL_SIZE + 23,
-                            )
-                        }
-                    }
-                }
-            }
-        updateCreatureCounter(map)
-
-        val nextTurnButton =
-            JButton("Next Turn").apply {
-                font = Font("Arial", Font.BOLD, 14)
-
-                addActionListener {
-                    SimulationEngine.nextTurn(map)
-
-                    turn++
-                    turnLabel.text = "Turn: $turn"
-
-                    updateCreatureCounter(map)
-                    fieldPanel.repaint()
+                if (!animationManager.isRunning()) {
+                    timer.stop()
                 }
             }
 
-        frame.layout = BorderLayout()
+        button.addActionListener {
+            animationManager.captureBeforeTurn(map)
 
-        val topPanel = JPanel(BorderLayout())
+            SimulationEngine.nextTurn(map)
 
-        topPanel.add(
+            animationManager.createAnimations(map)
+
+            turn++
+
+            turnLabel.text =
+                "Turn: $turn"
+
+            timer.start()
+        }
+
+        val top =
+            JPanel(BorderLayout())
+
+        top.add(
             turnLabel,
             BorderLayout.NORTH,
         )
 
-        topPanel.add(
-            creatureLabel,
-            BorderLayout.SOUTH,
-        )
-
-        frame.layout = BorderLayout()
+        frame.layout =
+            BorderLayout()
 
         frame.add(
-            topPanel,
+            top,
             BorderLayout.NORTH,
         )
 
         frame.add(
-            fieldPanel,
+            panel,
             BorderLayout.CENTER,
         )
 
         frame.add(
-            nextTurnButton,
+            button,
             BorderLayout.SOUTH,
         )
 
+        frame.setSize(
+            SimulationConfig.WIDTH *
+                SimulationPanel.CELL_SIZE + 20,
+            SimulationConfig.HEIGHT *
+                SimulationPanel.CELL_SIZE + 100,
+        )
+
+        frame.defaultCloseOperation =
+            JFrame.EXIT_ON_CLOSE
+
         frame.isVisible = true
-    }
-
-    private fun updateCreatureCounter(map: Map) {
-        var herbivores = 0
-        var predators = 0
-
-        for (y in 0 until SimulationConfig.HEIGHT) {
-            for (x in 0 until SimulationConfig.WIDTH) {
-                when (map.get(Position(x, y))) {
-                    is Herbivore -> herbivores++
-                    is Predator -> predators++
-                }
-            }
-        }
-
-        creatureLabel.text =
-            "Herbivores: $herbivores    Predators: $predators"
     }
 }
