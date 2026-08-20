@@ -1,8 +1,10 @@
 package simulation.general
 
+import simulation.creatures.Creature
 import simulation.creatures.Herbivore
 import simulation.creatures.Predator
 import simulation.food.HerbivoreFood
+import simulation.interfaces.Eatable
 
 class Map(
     private val cells: MutableMap<Position, Entity> = mutableMapOf(),
@@ -18,24 +20,30 @@ class Map(
         cells[coordinate] = entity
     }
 
+    fun remove(coordinate: Position): Entity? = cells.remove(coordinate)
+
     fun move(
-        entity: Entity,
+        creature: Creature,
         to: Position,
     ): Boolean {
         val target = cells[to]
 
-        if (target != null && !canReplace(entity, target)) {
+        if (target != null && !canReplace(creature, target)) {
             return false
         }
 
-        cells.remove(entity.position)
+        if (target is Eatable && canReplace(creature, target)) {
+            creature.satiety += target.getValue()
+        }
+
+        cells.remove(creature.position)
 
         // remove eaten entity
         cells.remove(to)
 
-        entity.position = to
+        creature.position = to
 
-        cells[to] = entity
+        cells[to] = creature
 
         return true
     }
@@ -44,9 +52,8 @@ class Map(
         mover: Entity,
         target: Entity,
     ): Boolean =
-        when {
-            mover is Predator && target is Herbivore -> true
-            mover is Herbivore && target is HerbivoreFood -> true
+        when (mover) {
+            is Herbivore if target is HerbivoreFood -> true
             else -> false
         }
 
