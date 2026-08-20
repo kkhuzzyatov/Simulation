@@ -50,9 +50,9 @@ class AnimationManager {
             }
     }
 
-    fun update() {
+    fun update(step: Double) {
         sprites.forEach {
-            it.update(0.05)
+            it.update(step)
         }
 
         sprites.removeIf {

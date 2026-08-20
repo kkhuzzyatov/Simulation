@@ -14,6 +14,12 @@ import javax.swing.Timer
 object SwingRenderer {
     private var turn = 0
 
+    private var simulationTimer: Timer? = null
+    val herbivoreLabel =
+        JLabel("Herbivores: 0")
+    val predatorLabel =
+        JLabel("Predators: 0")
+
     fun render(map: Map) {
         val frame =
             JFrame("Simulation")
@@ -40,43 +46,107 @@ object SwingRenderer {
                     )
             }
 
-        val button =
-            JButton("Next Turn")
+        val runButton =
+            JButton("Run")
 
-        lateinit var timer: Timer
+        val speedButton =
+            JButton(
+                SimulationController.speed.label,
+            )
 
-        timer =
+        val animationTimer =
             Timer(16) {
-                animationManager.update()
-                panel.repaint()
+                animationManager.update(
+                    SimulationController.speed.animationStep,
+                )
 
-                if (!animationManager.isRunning()) {
-                    timer.stop()
-                }
+                panel.repaint()
             }
 
-        button.addActionListener {
-            animationManager.captureBeforeTurn(map)
+        animationTimer.start()
 
-            SimulationEngine.nextTurn(map)
+        runButton.addActionListener {
+            SimulationController.running =
+                !SimulationController.running
 
-            animationManager.createAnimations(map)
+            if (SimulationController.running) {
+                runButton.text = "Pause"
 
-            turn++
+                startSimulationTimer(
+                    map,
+                    animationManager,
+                    panel,
+                    turnLabel,
+                )
+            } else {
+                runButton.text = "Run"
 
-            turnLabel.text =
-                "Turn: $turn"
+                simulationTimer?.stop()
+            }
+        }
 
-            timer.start()
+        speedButton.addActionListener {
+            SimulationController.speed =
+                when (SimulationController.speed) {
+                    SimulationSpeed.X05 -> {
+                        SimulationSpeed.X1
+                    }
+
+                    SimulationSpeed.X1 -> {
+                        SimulationSpeed.X2
+                    }
+
+                    SimulationSpeed.X2 -> {
+                        SimulationSpeed.X3
+                    }
+
+                    SimulationSpeed.X3 -> {
+                        SimulationSpeed.X5
+                    }
+
+                    SimulationSpeed.X5 -> {
+                        SimulationSpeed.X10
+                    }
+
+                    SimulationSpeed.X10 -> {
+                        SimulationSpeed.X05
+                    }
+                }
+
+            speedButton.text =
+                SimulationController.speed.label
+
+            if (SimulationController.running) {
+                startSimulationTimer(
+                    map,
+                    animationManager,
+                    panel,
+                    turnLabel,
+                )
+            }
         }
 
         val top =
             JPanel(BorderLayout())
 
+        val stats =
+            JPanel()
+
+        stats.add(turnLabel)
+        stats.add(herbivoreLabel)
+        stats.add(predatorLabel)
+
         top.add(
-            turnLabel,
+            stats,
             BorderLayout.NORTH,
         )
+
+        val controls =
+            JPanel()
+
+        controls.add(runButton)
+
+        controls.add(speedButton)
 
         frame.layout =
             BorderLayout()
@@ -92,7 +162,7 @@ object SwingRenderer {
         )
 
         frame.add(
-            button,
+            controls,
             BorderLayout.SOUTH,
         )
 
@@ -107,5 +177,64 @@ object SwingRenderer {
             JFrame.EXIT_ON_CLOSE
 
         frame.isVisible = true
+    }
+
+    private fun updateCreatureCounters(
+        map: Map,
+        herbivoreLabel: JLabel,
+        predatorLabel: JLabel,
+    ) {
+        val herbivores =
+            map
+                .getAllEntities()
+                .count { it is simulation.creatures.Herbivore }
+
+        val predators =
+            map
+                .getAllEntities()
+                .count { it is simulation.creatures.Predator }
+
+        herbivoreLabel.text =
+            "Herbivores: $herbivores"
+
+        predatorLabel.text =
+            "Predators: $predators"
+    }
+
+    private fun startSimulationTimer(
+        map: Map,
+        animationManager: AnimationManager,
+        panel: SimulationPanel,
+        turnLabel: JLabel,
+    ) {
+        simulationTimer?.stop()
+
+        simulationTimer =
+            Timer(
+                SimulationController.speed.delay,
+            ) {
+                if (!animationManager.isRunning()) {
+                    animationManager.captureBeforeTurn(map)
+
+                    SimulationEngine.nextTurn(map)
+
+                    animationManager.createAnimations(map)
+
+                    turn++
+
+                    turnLabel.text =
+                        "Turn: $turn"
+                }
+
+                updateCreatureCounters(
+                    map,
+                    herbivoreLabel,
+                    predatorLabel,
+                )
+
+                panel.repaint()
+            }
+
+        simulationTimer?.start()
     }
 }
