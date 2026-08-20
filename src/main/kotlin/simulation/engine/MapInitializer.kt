@@ -11,7 +11,6 @@ import simulation.landscape.Rock
 import kotlin.random.Random
 
 object MapInitializer {
-
     fun init(): Map {
         val map = Map()
 
@@ -24,14 +23,12 @@ object MapInitializer {
         return map
     }
 
-
     private fun generateRocks(map: Map) {
         repeat(SimulationConfig.START_ROCKS) {
             val position = randomFreePosition(map)
             map.put(position, Rock())
         }
     }
-
 
     private fun generateGrass(map: Map) {
         repeat(SimulationConfig.START_GRASS) {
@@ -40,14 +37,12 @@ object MapInitializer {
         }
     }
 
-
     private fun generateTrees(map: Map) {
         repeat(SimulationConfig.START_TREES) {
             val position = randomFreePosition(map)
             map.put(position, Tree())
         }
     }
-
 
     private fun generateHerbivores(map: Map) {
         repeat(SimulationConfig.START_HERBIVORES) {
@@ -59,12 +54,11 @@ object MapInitializer {
                     speed = 1.0,
                     hp = 100,
                     hunger = 140,
-                    satiety = 84.0
-                )
+                    satiety = 84.0,
+                ),
             )
         }
     }
-
 
     private fun generatePredators(map: Map) {
         repeat(SimulationConfig.START_PREDATORS) {
@@ -77,20 +71,19 @@ object MapInitializer {
                     hp = 150,
                     attack = 30,
                     hunger = 300,
-                    satiety = 180.0
-                )
+                    satiety = 180.0,
+                ),
             )
         }
     }
 
     private fun randomFreePosition(map: Map): Position {
-
         while (true) {
-
-            val position = Position(
-                x = Random.nextInt(0, SimulationConfig.WIDTH).toDouble(),
-                y = Random.nextInt(0, SimulationConfig.HEIGHT).toDouble()
-            )
+            val position =
+                Position(
+                    x = Random.nextInt(0, SimulationConfig.WIDTH),
+                    y = Random.nextInt(0, SimulationConfig.HEIGHT),
+                )
 
             if (map.isEmpty(position)) {
                 return position

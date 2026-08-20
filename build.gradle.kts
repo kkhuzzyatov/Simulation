@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.3.0"
+    id("com.diffplug.spotless") version "8.8.0"
 }
 
 group = "org"
@@ -19,4 +20,14 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+spotless {
+    kotlin {
+        ktlint()
+    }
+
+    kotlinGradle {
+        ktlint()
+    }
 }
