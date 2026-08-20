@@ -23,8 +23,9 @@ object SwingRenderer {
 
     private var turn = 0
 
-    private lateinit var fieldPanel: JPanel
     private lateinit var turnLabel: JLabel
+    private lateinit var creatureLabel: JLabel
+    private lateinit var fieldPanel: JPanel
 
     fun render(map: Map) {
         val frame = JFrame("Simulation")
@@ -42,6 +43,14 @@ object SwingRenderer {
                 JLabel.CENTER,
             ).apply {
                 font = Font("Arial", Font.BOLD, 18)
+            }
+
+        creatureLabel =
+            JLabel(
+                "",
+                JLabel.CENTER,
+            ).apply {
+                font = Font("Arial", Font.PLAIN, 16)
             }
 
         fieldPanel =
@@ -74,6 +83,7 @@ object SwingRenderer {
                     }
                 }
             }
+        updateCreatureCounter(map)
 
         val nextTurnButton =
             JButton("Next Turn").apply {
@@ -85,14 +95,29 @@ object SwingRenderer {
                     turn++
                     turnLabel.text = "Turn: $turn"
 
+                    updateCreatureCounter(map)
                     fieldPanel.repaint()
                 }
             }
 
         frame.layout = BorderLayout()
 
-        frame.add(
+        val topPanel = JPanel(BorderLayout())
+
+        topPanel.add(
             turnLabel,
+            BorderLayout.NORTH,
+        )
+
+        topPanel.add(
+            creatureLabel,
+            BorderLayout.SOUTH,
+        )
+
+        frame.layout = BorderLayout()
+
+        frame.add(
+            topPanel,
             BorderLayout.NORTH,
         )
 
@@ -107,5 +132,22 @@ object SwingRenderer {
         )
 
         frame.isVisible = true
+    }
+
+    private fun updateCreatureCounter(map: Map) {
+        var herbivores = 0
+        var predators = 0
+
+        for (y in 0 until SimulationConfig.HEIGHT) {
+            for (x in 0 until SimulationConfig.WIDTH) {
+                when (map.get(Position(x, y))) {
+                    is Herbivore -> herbivores++
+                    is Predator -> predators++
+                }
+            }
+        }
+
+        creatureLabel.text =
+            "Herbivores: $herbivores    Predators: $predators"
     }
 }
