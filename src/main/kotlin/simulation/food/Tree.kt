@@ -7,7 +7,5 @@ import simulation.general.Position
 class Tree(
     position: Position,
 ) : HerbivoreFood(position) {
-    override fun getValue(): Int {
-        return SimulationConfig.TREE_VALUE
-    }
+    override fun getValue(): Int = SimulationConfig.TREE_VALUE
 }

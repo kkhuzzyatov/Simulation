@@ -7,7 +7,5 @@ import simulation.general.Position
 class Grass(
     position: Position,
 ) : HerbivoreFood(position) {
-    override fun getValue(): Int {
-        return SimulationConfig.GRASS_VALUE
-    }
+    override fun getValue(): Int = SimulationConfig.GRASS_VALUE
 }
