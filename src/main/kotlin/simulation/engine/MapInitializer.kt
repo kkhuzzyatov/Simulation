@@ -52,10 +52,9 @@ object MapInitializer {
                 position,
                 Herbivore(
                     position,
-                    speed = 1,
-                    hp = 100,
-                    hunger = 140,
-                    satiety = 84.0,
+                    speed = SimulationConfig.HERBIVORE_SPEED,
+                    maxHp = SimulationConfig.HERBIVORE_MAX_HP,
+                    hunger = SimulationConfig.HERBIVORE_HUNGER,
                 ),
             )
         }
@@ -69,11 +68,10 @@ object MapInitializer {
                 position,
                 Predator(
                     position,
-                    speed = 2,
-                    hp = 150,
-                    attack = 30,
-                    hunger = 300,
-                    satiety = 180.0,
+                    speed = SimulationConfig.PREDATOR_SPEED,
+                    maxHp = SimulationConfig.PREDATOR_MAX_HP,
+                    attack = SimulationConfig.PREDATOR_DAMAGE,
+                    hunger = SimulationConfig.PREDATOR_HUNGER,
                 ),
             )
         }
