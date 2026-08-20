@@ -26,21 +26,21 @@ object MapInitializer {
     private fun generateRocks(map: Map) {
         repeat(SimulationConfig.START_ROCKS) {
             val position = randomFreePosition(map)
-            map.put(position, Rock())
+            map.put(position, Rock(position))
         }
     }
 
     private fun generateGrass(map: Map) {
         repeat(SimulationConfig.START_GRASS) {
             val position = randomFreePosition(map)
-            map.put(position, Grass())
+            map.put(position, Grass(position))
         }
     }
 
     private fun generateTrees(map: Map) {
         repeat(SimulationConfig.START_TREES) {
             val position = randomFreePosition(map)
-            map.put(position, Tree())
+            map.put(position, Tree(position))
         }
     }
 
@@ -51,7 +51,8 @@ object MapInitializer {
             map.put(
                 position,
                 Herbivore(
-                    speed = 1.0,
+                    position,
+                    speed = 1,
                     hp = 100,
                     hunger = 140,
                     satiety = 84.0,
@@ -67,7 +68,8 @@ object MapInitializer {
             map.put(
                 position,
                 Predator(
-                    speed = 1.0,
+                    position,
+                    speed = 2,
                     hp = 150,
                     attack = 30,
                     hunger = 300,
